@@ -3,7 +3,7 @@ const User = require('../models/user');
 module.exports = {
     async getUsers(req, res) {
         try {
-            const users = await User.find().select('username');
+            const users = await User.find().select('_id email name is_admin');
 
             return res.status(200).json({
                 success: true,
@@ -16,7 +16,7 @@ module.exports = {
     },
     async getUser(req, res) {
         try {
-            const user = await User.findById(req.params.id).select('name');
+            const user = await User.findById(req.params.id).select('_id email name is_admin');
 
             return res.status(200).json({
                 success: true,
