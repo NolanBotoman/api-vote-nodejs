@@ -1,11 +1,11 @@
-const User = require('../models/user')
+const User = require('../models/user');
+const Mail = require('../models/Mail');
 const Helper = require('../helpers');
 
 module.exports = {
     async signUp(req, res) {
-        console.log(req.body)
         if (!req.body.name || !req.body.email || !req.body.password) {
-            Helper.buildError(res, "Empty fields aren't allowed.");
+            Helper.buildError(res, "Empty fields aren't allowed. Require 'name', 'email', 'password");
             return;
         } else if (!Helper.checkMail(req.body.email)) {
             Helper.buildError(res, "Email address isn't valid.");
@@ -15,8 +15,11 @@ module.exports = {
         try {
             const name = req.body.name; const email = req.body.email; const password = req.body.password;
             
-            const user = new User({ name, email, password });
+            const user = new User({ name, email });
+            user.storePassword(password);
             const newUser = await user.save();
+
+            Mail.makeMail("FRESH_CREATED", email);
 
             return res.status(200).send({
                 success: true,
@@ -25,12 +28,12 @@ module.exports = {
             });
         } catch (error) {
             console.log(error);
-            return res.status(500).send('Erreur');
+            return res.status(500).send('Error');
         }
     },
     async signIn(req, res) {
         if (!req.body.name || !req.body.password) {
-            Helper.buildError(res, "Empty fields aren't allowed.");
+            Helper.buildError(res, "Empty fields aren't allowed. Require 'name', 'password'");
             return;
         } else if (!Helper.checkMail(req.body.email)) {
             Helper.buildError(res, "Email address isn't valid.");
@@ -38,23 +41,25 @@ module.exports = {
         }
 
         try {
-            const referencedUser = await User.findOne({ "name": req.body.name, "password": req.body.password });
+            const referencedUser = await User.findOne({ "email": req.body.email });
 
             if (referencedUser == null) {
-                Helper.buildError(res, "User not found.");
+                Helper.buildError(res, "Unknown user.");
+                return;
+            } else if (referencedUser.verifyHash(req.body.password)) {
+                Helper.buildError(res, "Bad credentials.");
                 return;
             }
 
             return res.status(200).json({
                 success: true,
                 user: {
-                    name: referencedUser.name,
-                    _id: referencedUser._id
+                    token: referencedUser.generateNewJWT()
                 }
             });
         } catch (error) {
             console.log(error);
-            return res.status(500).send('Erreur');
+            return res.status(500).send('Error');
         }
     },
 }
