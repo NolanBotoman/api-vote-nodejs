@@ -12,6 +12,13 @@ module.exports = {
             return;
         }
 
+        const alreadyExists = await User.findOne({ "email": req.body.email });
+
+        if (alreadyExists) {
+            Helper.buildError(res, "Email address is alreayd registered.");
+            return;
+        }
+
         try {
             const name = req.body.name; const email = req.body.email; const password = req.body.password;
             

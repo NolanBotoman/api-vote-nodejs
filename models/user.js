@@ -58,6 +58,7 @@ userSchema.methods.generateNewJWT = function()
     return jwt.sign({
         _id : this._id,
         email : this.email,
+        is_admin : this.is_admin,
     }, JWT_SECRET, { expiresIn : '10d' })
 }
 

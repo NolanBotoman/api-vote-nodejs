@@ -14,7 +14,7 @@ const api = express();
 api.use(helmet());
 api.use(express.json());
 
-global.JWT_SECRET = crypto.randomBytes(64).toString('hex')
+global.JWT_SECRET = process.env.JWT_SECRET;
 
 api.use(bodyParser.urlencoded({
   extended: true

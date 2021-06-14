@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const voteSchema = new Schema({
     name: String,
-    count: String
+    users : Array
 });
 
 const Vote = mongoose.model('Vote', voteSchema);
