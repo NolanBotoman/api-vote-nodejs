@@ -15,7 +15,7 @@ module.exports = {
         const alreadyExists = await User.findOne({ "email": req.body.email });
 
         if (alreadyExists) {
-            Helper.buildError(res, "Email address is alreayd registered.");
+            Helper.buildError(res, "Email address is already registered.");
             return;
         }
 
@@ -39,7 +39,7 @@ module.exports = {
         }
     },
     async signIn(req, res) {
-        if (!req.body.name || !req.body.password) {
+        if (!req.body.email || !req.body.password) {
             Helper.buildError(res, "Empty fields aren't allowed. Require 'name', 'password'");
             return;
         } else if (!Helper.checkMail(req.body.email)) {
@@ -61,7 +61,11 @@ module.exports = {
             return res.status(200).json({
                 success: true,
                 user: {
-                    token: referencedUser.generateNewJWT()
+                    token: referencedUser.generateNewJWT(),
+                    _id: referencedUser._id,
+                    email: referencedUser.email,
+                    name: referencedUser.name,
+                    is_admin: referencedUser.is_admin,
                 }
             });
         } catch (error) {

@@ -39,10 +39,9 @@ module.exports = {
     async getVotes(req, res) {
         try {
             const votes = await Vote.find({});
-
             return res.status(200).json({
                 success: true,
-                votes: [votes]
+                votes: votes
             })
         } catch (error) {
             console.log(error);

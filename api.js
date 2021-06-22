@@ -29,6 +29,22 @@ const db = mongoose.connection;
 db.on('error', console.error.bind(console, "Error, couldn't connect to specified Mongo database."));
 db.once('open', () => console.log("Successfully connected to MongoDB"));
 
+const allowCrossDomain = function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      
+    // intercept OPTIONS method
+    if ('OPTIONS' == req.method) {
+      res.send(200);
+    }
+    else {
+      next();
+    }
+};
+
+api.use(allowCrossDomain);
+
 api.use('/auth/', authRouter);
 api.use('/admin/', adminRouter);
 api.use('/vote/', voteRouter);

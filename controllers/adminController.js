@@ -7,7 +7,7 @@ module.exports = {
 
             return res.status(200).json({
                 success: true,
-                users: [users]
+                users: users
             });
         } catch (error) {
             console.log(error);

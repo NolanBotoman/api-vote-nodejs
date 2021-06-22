@@ -1,12 +1,14 @@
 const express = require('express');
 const adminController = require('../controllers/adminController');
-const jwt = require('jsonwebtoken');  
+const jwt = require('jsonwebtoken');
+const Helper = require('../helpers');  
 
 exports.router = (() => {
     const router = express.Router();
 
     router.all('*', function (req, res, next) {
         if (!req.header('Authorization')) {
+            console.log(req.header('Authorization'));
             Helper.buildError(res, "Missing 'Authorization Bearer'.");
             return;
         }
